@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html class="animated fadeIn">
+<link rel="icon" href="https://onuniverse-assets.imgix.net/6ABEB496-EA10-4CCC-9AE5-259C2F414557.jpg?q=75&dpr=1.25" type="image/gif" sizes="16x16">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui, viewport-fit=cover">
+<title>Flux Team</title>
+<link rel="stylesheet" href="animate.css">
+<head>
+<style>
+
+body{
+  margin:0px;
+  background-color:#444444;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 5rem;
+}
+
+.heading {
+  color: #008080;
+  font-size: 25px;;
+  font-weight: 300;
+  text-transform: uppercase;
+}
+
+
+</style>
+</head>
+<body>
+
+  <a href="nav.html" style="text-decoration:none;position:absolute;right:20px;top:12px;"><img style="width:30px;" src="img/menu.png"></img></a>
+
+
+<center><img style="width:100%;border-bottom:solid;border-bottom-color:red;" src="https://onuniverse-assets.imgix.net/369760B7-770C-4459-8CB3-C7CDEB89ECF6.jpg?q=75&dpr=1.25"></img></center>
+
+<center>
+<div style="font-family: 'underline', arial;" class="container">
+  <h1 class="heading" data-target-resolver></h1>
+</div>
+</center>
+
+
+
+</body>
+</html>
+
+<script>
+const resolver = {
+  resolve: function resolve(options, callback) {
+
+    const resolveString = options.resolveString || options.element.getAttribute('data-target-resolver');
+    const combinedOptions = Object.assign({}, options, {resolveString: resolveString});
+
+    function getRandomInteger(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    };
+
+    function randomCharacter(characters) {
+      return characters[getRandomInteger(0, characters.length - 1)];
+    };
+
+    function doRandomiserEffect(options, callback) {
+      const characters = options.characters;
+      const timeout = options.timeout;
+      const element = options.element;
+      const partialString = options.partialString;
+
+      let iterations = options.iterations;
+
+      setTimeout(() => {
+        if (iterations >= 0) {
+          const nextOptions = Object.assign({}, options, {iterations: iterations - 1});
+
+
+          if (iterations === 0) {
+            element.textContent = partialString;
+          } else {
+
+            element.textContent = partialString.substring(0, partialString.length - 1) + randomCharacter(characters);
+          }
+
+          doRandomiserEffect(nextOptions, callback)
+        } else if (typeof callback === "function") {
+          callback();
+        }
+      }, options.timeout);
+    };
+
+    function doResolverEffect(options, callback) {
+      const resolveString = options.resolveString;
+      const characters = options.characters;
+      const offset = options.offset;
+      const partialString = resolveString.substring(0, offset);
+      const combinedOptions = Object.assign({}, options, {partialString: partialString});
+
+      doRandomiserEffect(combinedOptions, () => {
+        const nextOptions = Object.assign({}, options, {offset: offset + 1});
+
+        if (offset <= resolveString.length) {
+          doResolverEffect(nextOptions, callback);
+        } else if (typeof callback === "function") {
+          callback();
+        }
+      });
+    };
+
+    doResolverEffect(combinedOptions, callback);
+  }
+}
+
+
+const strings = [
+  'HI WE ARE FLUX TEAM',
+  'We Code For CHEAP',
+  'What Do You Need',
+  'Follow Us On Twitter'
+];
+
+let counter = 0;
+
+const options = {
+
+  offset: 0,
+
+  timeout: 10,
+
+  iterations: 15,
+
+  characters: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'x', 'y', 'x', '#', '%', '&', '-', '+', '_', '?', '/', '\\', '='],
+
+  resolveString: strings[counter],
+
+  element: document.querySelector('[data-target-resolver]')
+}
+
+function callback() {
+  setTimeout(() => {
+    counter ++;
+
+    if (counter >= strings.length) {
+      counter = 0;
+    }
+
+    let nextOptions = Object.assign({}, options, {resolveString: strings[counter]});
+    resolver.resolve(nextOptions, callback);
+  }, 1000);
+}
+
+resolver.resolve(options, callback);
+</script>
